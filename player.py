@@ -34,13 +34,13 @@ class Player(Circle):
 					entity.tourqe += spring_force.cross(collision_point - entity.mid)
 
 	def force_update(self, dt):
-		if self.keys.get("w"):
+		if self.keys.get("w") or self.keys.get("up"):
 			self.force.y -= self.power
-		if self.keys.get("s"):
+		if self.keys.get("s") or self.keys.get("down"):
 			self.force.y += self.power
-		if self.keys.get("a"):
+		if self.keys.get("a") or self.keys.get("left"):
 			self.force.x -= self.power
-		if self.keys.get("d"):
+		if self.keys.get("d") or self.keys.get("right"):
 			self.force.x += self.power
 
 		self.restrain()
