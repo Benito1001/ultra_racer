@@ -1,9 +1,7 @@
 from vector2 import Vec2d
 
 class Hitbox(object):
-
-	def __init__(self, context, pos, w, h):
-		self.context = context
+	def __init__(self, pos, w, h):
 		self.pos = pos
 		self.type = type
 		self.w = w
@@ -12,8 +10,7 @@ class Hitbox(object):
 
 	def update(self, pos):
 		self.pos = pos
-		self.mid.x = self.pos.x + self.w/2
-		self.mid.y = self.pos.y + self.h/2
+		self.mid = self.pos + (self.w/2,  self.h/2)
 
 	def collides(self, other):
 		if (

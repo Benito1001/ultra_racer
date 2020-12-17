@@ -252,6 +252,7 @@ class Vec2d(object):
 		y = self.x*sin + self.y*cos
 		self.x = x
 		self.y = y
+		return self
 
 	def rotated(self, angle):
 		cos = math.cos(angle)
@@ -325,6 +326,9 @@ class Vec2d(object):
 
 	def __setstate__(self, dict):
 		self.x, self.y = dict
+
+	def copy(self):
+		return Vec2d(self.x, self.y)
 
 ########################################################################
 ## Unit Testing													   ##

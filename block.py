@@ -1,40 +1,29 @@
-import pygame
-import numpy as np
+from numpy import pi
 from vector2 import Vec2d
-from entity import Entity
-from hitbox import Hitbox
+from polygon import Polygon
 
-class Block(Entity):
-	def __init__(self, context, x, y, w, h):
-		Entity.__init__(self, context, x, y)
+class Block(Polygon):
+	def __init__(self, context, x, y, w, h, density, rot=0):
 		self.w = w
 		self.h = h
-		self.hitbox = Hitbox(context, self.pos, self.w, self.h)
-		self.corners = [
-			Vec2d(self.pos), Vec2d(self.pos+(self.w, 0)),
-			Vec2d(self.pos+(self.w, self.h)), Vec2d(self.pos+(0, self.h))
-		]
-		self.shape = "square"
+		self.mid = Vec2d(x + self.w/2, y + self.h/2)
 
-		self.Surface = pygame.Surface((self.px2m(self.w), self.px2m(self.h)))
-		self.Surface.fill((255, 255, 255))
-		pygame.draw.rect(self.Surface, (0, 0, 0), pygame.Rect(
-			0, 0, self.px2m(self.w), self.px2m(self.h)
-		))
-		self.Surface = self.Surface.convert()
-
-	def draw(self):
-		self.context.screen.blit(self.Surface, self.px2m_tuple(self.pos.x, self.pos.y))
+		mass = density*w*h
+		moofin = (w**2 + h**2)/12 * mass
+		Polygon.__init__(self, context, self.get_vertices(rot), mass, moofin, immovable=True)
+		self.rot = rot
 
 	def update(self, entities, dt):
-		self.hitbox.update(self.pos)
+		self.physics_update(dt)
+		self.set_pos(dt)
+		self.update_points(self.get_vertices(self.rot))
 
-	def get_corner(self, angle):
-		if angle > 0:
-			if angle < np.pi/2:
-				return self.corners[0]
-			return self.corners[1]
-		if angle <= 0:
-			if angle > -np.pi/2:
-				return self.corners[3]
-			return self.corners[2]
+	def get_vertices(self, rot):
+		vertices = [
+			Vec2d(self.mid.x - self.w/2, self.mid.y - self.h/2),
+			Vec2d(self.mid.x + self.w/2, self.mid.y - self.h/2),
+			Vec2d(self.mid.x + self.w/2, self.mid.y + self.h/2),
+			Vec2d(self.mid.x - self.w/2, self.mid.y + self.h/2),
+			Vec2d(self.mid.x - self.w/2, self.mid.y - self.h/2)
+		]
+		return [self.mid + (vertex - self.mid).rotate(rot) for vertex in vertices]

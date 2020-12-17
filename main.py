@@ -23,6 +23,8 @@ background.fill((255, 255, 255))
 background = background.convert()
 screen.blit(background, (0, 0))
 
+entities = []
+
 class Context():
 	px2m = px2m
 	px2m_func = lambda self, n: n*px2m
@@ -31,15 +33,18 @@ class Context():
 	screen_size_m = Size(screen_size_px.w/px2m, screen_size_px.h/px2m)
 	screen = screen
 	background = background
+	entities = entities
 context = Context()
 
 
 player = Player(context, 0.5, 0.5, 1)
 
-entities = [
-	player,
-	Block(context, 5, 5, 1, 1)
-]
+entities.append(player)
+
+bw = screen_size.w/(px2m*2)/20
+bh = bw*20
+midm = Size(screen_size.w/(px2m*2), screen_size.h/(px2m*2))
+entities.append(Block(context, midm.w-bh/2, midm.h-bw/2, bh, bw, 1))
 
 
 while mainloop:
@@ -55,9 +60,10 @@ while mainloop:
 		dt = 1/fps
 
 	# Update and Draw
-	for entity in entities:
-		for i in range(10):
-			entity.update(entities, dt/10)
+	quality = 40
+	for i in range(quality):
+		for entity in entities:
+			entity.update(entities, dt/quality)
 
 	screen.blit(background, (0, 0))
 	for entity in entities:
